@@ -64,7 +64,7 @@ dmypy.json
 
 # Project-Specific Output & Local Sandbox
 .sandbox/
-translated_charactersheets/
+translations_cache.json
 
 # Logs & Temporary Files
 *.log
