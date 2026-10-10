@@ -89,16 +89,6 @@ To add support for a new language (e.g., Spanish `ES`, German `DE`):
 AuroraBuilder-PDF-sheet-translator/
 ├── translate.py                    # Main executable CLI script
 ├── requirements.txt                # Python dependencies
-├── charactersheets/                # Original English PDFs
-│   ├── barbarian totembear lv4 halforc.pdf
-│   ├── druid circleofgrassland lv4 woodelf.pdf
-│   ├── paladin vengance lv4 drow.pdf
-│   └── rogue thief lv4 human.pdf
-├── translated_charactersheets/     # Generated translated PDFs
-│   ├── barbarian totembear lv4 halforc_ita.pdf
-│   ├── druid circleofgrassland lv4 woodelf_ita.pdf
-│   ├── paladin vengance lv4 drow_ita.pdf
-│   └── rogue thief lv4 human_ita.pdf
 ├── GEMINI.MD                       # Architecture & developer context for AI
 └── dnd_translator/                 # Core translator package
     ├── __init__.py
