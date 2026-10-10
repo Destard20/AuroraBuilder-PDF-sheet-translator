@@ -4,10 +4,13 @@ import json
 import unicodedata
 
 class DndGlossary:
-    def __init__(self, data_dir=None):
+    def __init__(self, data_dir=None, lang="IT"):
+        self.lang = lang
         if data_dir is None:
-            data_dir = os.path.join(os.path.dirname(__file__), 'data')
+            data_dir = os.path.join(os.path.dirname(__file__), 'data', lang)
         self.data_dir = data_dir
+        if not os.path.isdir(self.data_dir):
+            raise FileNotFoundError(f"Language data directory not found: {self.data_dir}")
         self.terms = {}
         self.norm_terms = {}
         self.descriptions = {}
@@ -65,13 +68,17 @@ class DndGlossary:
         if m:
             base = m.group(1).strip()
             trans_base = self.lookup(base)
-            return f"{trans_base} (Sempre Preparato)"
+            tag = self.lookup("Always Prepared")
+            tag_str = tag if tag != "Always Prepared" else ("Sempre Preparato" if self.lang.upper() == "IT" else "Always Prepared")
+            return f"{trans_base} ({tag_str})"
 
         m = re.match(r'^(.*?)\s*\((Dark Elf)\)$', cleaned, re.IGNORECASE)
         if m:
             base = m.group(1).strip()
             trans_base = self.lookup(base)
-            return f"{trans_base} (Elfo Oscuro)"
+            tag = self.lookup("Dark Elf")
+            tag_str = tag if tag != "Dark Elf" else ("Elfo Oscuro" if self.lang.upper() == "IT" else "Dark Elf")
+            return f"{trans_base} ({tag_str})"
 
         m = re.match(r'^(.*?)\s*\((Action|Bonus Action|Reaction)[—\-](.*?)\)$', cleaned, re.IGNORECASE)
         if m:
@@ -85,7 +92,12 @@ class DndGlossary:
         if m:
             base, tag = m.group(1).strip(), m.group(2).strip()
             trans_base = self.lookup(base)
-            tag_trans = tag.replace('Long Rest', 'Riposo Lungo').replace('Short Rest', 'Riposo Breve')
+            if self.lang.upper() == "IT":
+                tag_trans = tag.replace('Long Rest', 'Riposo Lungo').replace('Short Rest', 'Riposo Breve')
+            else:
+                lr = self.lookup("Long Rest")
+                sr = self.lookup("Short Rest")
+                tag_trans = tag.replace('Long Rest', lr).replace('Short Rest', sr)
             return f"{trans_base} ({tag_trans})"
 
         m = re.match(r'^([\d\+\-\s\(\)dD]+)\s+([A-Za-z]+)(\s*\(Versatile\))?$', cleaned)
@@ -95,23 +107,33 @@ class DndGlossary:
             if trans_dmg != dmg_type:
                 res = f"{dice_part} {trans_dmg}"
                 if vers:
-                    res += " (Versatile)"
+                    vers_str = self.lookup("Versatile")
+                    res += f" ({vers_str if vers_str != 'Versatile' else 'Versatile'})"
                 return res
 
         m = re.match(r'^(\d+)(st|nd|rd|th)-level\s+([A-Za-z]+)(\s*\(ritual\))?$', cleaned, re.IGNORECASE)
         if m:
             lvl, school, ritual = m.group(1), m.group(3), m.group(4)
             school_trans = self.lookup(school)
-            res = f"{school_trans} di {lvl}° livello"
+            if self.lang.upper() == "IT":
+                res = f"{school_trans} di {lvl}° livello"
+                if ritual:
+                    res += " (rituale)"
+                return res
+            res = f"{lvl}-level {school_trans}"
             if ritual:
-                res += " (rituale)"
+                rit_str = self.lookup("ritual")
+                res += f" ({rit_str})"
             return res
 
         m = re.match(r'^([A-Za-z]+)\s+Cantrip$', cleaned, re.IGNORECASE)
         if m:
             school = m.group(1)
             school_trans = self.lookup(school)
-            return f"Trucchetto di {school_trans}"
+            if self.lang.upper() == "IT":
+                return f"Trucchetto di {school_trans}"
+            cantrip_str = self.lookup("Cantrip")
+            return f"{school_trans} {cantrip_str}"
 
         m = re.match(r'^Level\s+(\d+)\s+([A-Za-z\-\s]+?)\s+([A-Za-z]+),\s+(.+)$', cleaned, re.IGNORECASE)
         if m:
@@ -119,14 +141,20 @@ class DndGlossary:
             race_trans = self.lookup(race)
             cls_trans = self.lookup(cls)
             sub_trans = self.lookup(subclass)
-            return f"{cls_trans} {race_trans} di {lvl}° Livello, {sub_trans}"
+            if self.lang.upper() == "IT":
+                return f"{cls_trans} {race_trans} di {lvl}° Livello, {sub_trans}"
+            level_str = self.lookup("Level")
+            return f"{level_str} {lvl} {race_trans} {cls_trans}, {sub_trans}"
 
         m = re.match(r'^Level\s+(\d+)\s+([A-Za-z\-\s]+?)\s+([A-Za-z]+)$', cleaned, re.IGNORECASE)
         if m:
             lvl, race, cls = m.group(1), m.group(2).strip(), m.group(3).strip()
             race_trans = self.lookup(race)
             cls_trans = self.lookup(cls)
-            return f"{cls_trans} {race_trans} di {lvl}° Livello"
+            if self.lang.upper() == "IT":
+                return f"{cls_trans} {race_trans} di {lvl}° Livello"
+            level_str = self.lookup("Level")
+            return f"{level_str} {lvl} {race_trans} {cls_trans}"
 
         # Class, Subclass: Paladin, Oath of Vengeance
         m = re.match(r'^([A-Za-z]+),\s+(.+)$', cleaned)

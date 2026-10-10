@@ -9,10 +9,11 @@ import requests
 from .glossary import DndGlossary
 
 class DndTranslator:
-    def __init__(self, glossary: Optional[DndGlossary] = None, cache_file: Optional[str] = None):
-        self.glossary = glossary or DndGlossary()
+    def __init__(self, glossary: Optional[DndGlossary] = None, cache_file: Optional[str] = None, lang: str = "IT"):
+        self.lang = lang
+        self.glossary = glossary or DndGlossary(lang=lang)
         if cache_file is None:
-            cache_file = os.path.join(os.path.dirname(__file__), 'data', 'translations_cache.json')
+            cache_file = os.path.join(os.path.dirname(__file__), 'data', lang, 'translations_cache.json')
         self.cache_file = cache_file
         self.cache = {}
         self.load_cache()
@@ -28,6 +29,7 @@ class DndTranslator:
 
     def save_cache(self):
         try:
+            os.makedirs(os.path.dirname(os.path.abspath(self.cache_file)), exist_ok=True)
             with open(self.cache_file, 'w', encoding='utf-8') as f:
                 json.dump(self.cache, f, ensure_ascii=False, indent=2)
         except Exception as e:
@@ -109,13 +111,14 @@ class DndTranslator:
         if not text or not text.strip():
             return text
 
+        target_lang = self.lang.lower()
         # Use MyMemory with valid user email for 50,000 char daily quota
         for attempt in range(2):
             try:
                 url = 'https://api.mymemory.translated.net/get'
                 params = {
                     'q': text,
-                    'langpair': 'en|it',
+                    'langpair': f'en|{target_lang}',
                     'de': 'aurora_dnd_translator@gmail.com'
                 }
                 resp = requests.get(url, params=params, timeout=10)
