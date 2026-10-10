@@ -129,7 +129,7 @@
   "VALUABLES — GEMS, ART OBJECTS, TRADE GOODS": "OGGETTI DI VALORE — GEMME, OPERE D'ARTE, MERCI",
   "COPPER": "RAME",
   "SILVER": "ARGENTO",
-  "ELECTRUM": "ELECTRUM",
+  "ELECTRUM": "ELETTRO",
   "GOLD": "ORO",
   "PLATINUM": "PLATINO",
   "ATTUNED MAGIC ITEMS": "OGGETTI MAGICI IN SINTONIA",
@@ -432,5 +432,6 @@
   "Xanathar’s Guide to Everything": "Guida Omnicomprensiva di Xanathar",
   "Tasha’s Cauldron of Everything": "Calderone di Tutto di Tasha",
   "Roll": "Tiro",
-  "Rolls": "Tiri"
+  "Rolls": "Tiri",
+  "Electrum": "Elettro"
 }
