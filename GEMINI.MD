@@ -11,7 +11,6 @@
 ### 1. CLI Entrypoint (`translate.py`)
 - Accepts `input` (file or folder), `-o / --output` (file or folder), and `-l / --lang` (target language folder name, default: `IT`).
 - Validates that `dnd_translator/data/{LANG}` exists; displays available languages on error.
-- Defaults input to `charactersheets/` and output to `translated_charactersheets/`.
 - Appends appropriate suffix: `_ita.pdf` for Italian (`IT`), `_{lang.lower()}.pdf` for other languages.
 
 ### 2. PDF Engine (`dnd_translator/pdf_engine.py`)
